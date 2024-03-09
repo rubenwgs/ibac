@@ -1,3 +1,15 @@
+# Some other stuff
+build
+*.o
+*/.idea
+*/.vscode
+*.json
+.DS_Store
+release
+debug
+cmake-build-debug
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
