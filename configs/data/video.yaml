@@ -1,6 +1,6 @@
 _target_: src.data.datamodules.VideoDataModule
 path_to_video: ${paths.data_dir}/Video/cat.mp4
-test_fraction: 0.1
+test_fraction: 0.9
 unseen_strategy: random
 samples: 200000
 seed: 42

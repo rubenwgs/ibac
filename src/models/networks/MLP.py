@@ -35,7 +35,7 @@ class MLP(nn.Module):
             layer = nn.Linear(self.dims[i], self.dims[i + 1])
 
             # apply takes as argument a function (Module)-> None
-            if self.activation == 'relu':
+            if self.activation_str == 'relu':
                 layer.apply(self.init_weights_normal)
             self.net.append(layer)
 

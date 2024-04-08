@@ -4,24 +4,24 @@ import torch
 import torch.nn as nn
 
 
-def get_activation(name: str, **kwargs) -> nn.Module:
+def get_activation(name: str) -> nn.Module:
     match name:
         case "relu":
             return nn.ReLU()
         case "siren":
             return Sine()
         case "gaussian":
-            return GaussianActivation(a=kwargs['a'], trainable=kwargs['trainable'])
+            return GaussianActivation()
         case "quadratic":
-            return QuadraticActivation(a=kwargs['a'], trainable=kwargs['trainable'])
+            return QuadraticActivation()
         case "multi_quadratic":
-            return MultiQuadraticActivation(a=kwargs['a'], trainable=kwargs['trainable'])
+            return MultiQuadraticActivation()
         case "laplacian":
-            return LaplacianActivation(a=kwargs['a'], trainable=kwargs['trainable'])
+            return LaplacianActivation()
         case "super_gaussian":
-            return SuperGaussianActivation(a=kwargs['a'], b=kwargs['b'], trainable=kwargs['trainable'])
+            return SuperGaussianActivation()
         case "exp_sin":
-            return ExpSinActivation(a=kwargs['a'], trainable=kwargs['trainable'])
+            return ExpSinActivation()
         case _:
             return nn.Identity()
 
