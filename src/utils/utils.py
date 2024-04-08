@@ -2,11 +2,27 @@ import warnings
 from importlib.util import find_spec
 from typing import Any, Callable, Dict, Optional, Tuple
 import os
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
+import numpy as np
 
 from src.utils import pylogger, rich_utils
 
 log = pylogger.RankedLogger(__name__, rank_zero_only=True)
+
+
+def init_omegaconf():
+    OmegaConf.register_new_resolver('calc_exp_lr_decay_rate', lambda factor, n: factor ** (1. / n))
+    OmegaConf.register_new_resolver('add', lambda a, b: a + b)
+    OmegaConf.register_new_resolver('eq', lambda a, b: a == b)
+    OmegaConf.register_new_resolver('sub', lambda a, b: a - b)
+    OmegaConf.register_new_resolver('mul', lambda a, b: a * b)
+    OmegaConf.register_new_resolver('div', lambda a, b: a / b)
+    OmegaConf.register_new_resolver('idiv', lambda a, b: a // b)
+    OmegaConf.register_new_resolver('basename', lambda p: os.path.basename(p))
+    OmegaConf.register_new_resolver('instant_ngp_scale', lambda n_levels, base_res, max_res: float(
+        np.exp(np.log(max_res / base_res) / (n_levels - 1))))
+    OmegaConf.register_new_resolver('torch', lambda cmd: eval(f'torch.{cmd}'))
+
 
 def get_rank() -> int:
     # SLURM_PROCID can be set even if SLURM is not managing the multiprocessing,

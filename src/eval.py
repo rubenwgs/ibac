@@ -1,11 +1,10 @@
 from typing import Any, Dict, List, Tuple
 
 import hydra
-import rootutils
 from lightning import LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig, OmegaConf
-import numpy as np
+
 
 # rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
@@ -31,22 +30,11 @@ from src.utils import (
     instantiate_loggers,
     log_hyperparameters,
     task_wrapper,
+    init_omegaconf,
 )
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
-def init_omegaconf():
-    OmegaConf.register_new_resolver('calc_exp_lr_decay_rate', lambda factor, n: factor ** (1. / n))
-    OmegaConf.register_new_resolver('add', lambda a, b: a + b)
-    OmegaConf.register_new_resolver('eq', lambda a, b: a == b)
-    OmegaConf.register_new_resolver('sub', lambda a, b: a - b)
-    OmegaConf.register_new_resolver('mul', lambda a, b: a * b)
-    OmegaConf.register_new_resolver('div', lambda a, b: a / b)
-    OmegaConf.register_new_resolver('idiv', lambda a, b: a // b)
-    OmegaConf.register_new_resolver('basename', lambda p: os.path.basename(p))
-    OmegaConf.register_new_resolver('instant_ngp_scale', lambda n_levels, base_res, max_res: float(
-        np.exp(np.log(max_res / base_res) / (n_levels - 1))))
-    OmegaConf.register_new_resolver('torch', lambda cmd: eval(f'torch.{cmd}'))
 @task_wrapper
 def evaluate(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Evaluates given checkpoint on a datamodule testset.
