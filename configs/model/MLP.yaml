@@ -1,0 +1,21 @@
+_target_: src.models.systems.MLPVideoSystem
+
+net:
+  _target_: src.models.networks.MLP
+  in_features: 3
+  out_features: 3
+  hidden_features: 128
+  num_hidden_layers: 4
+  activation: 'relu'
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.00005
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  _partial_: true
+  T_max: ${trainer.max_steps}
+  eta_min: ${mul:${model.optimizer.lr}, 0.1}
+

@@ -1,0 +1,10 @@
+_target_: src.data.datamodules.VideoDataModule
+path_to_video: /Users/brucebalfour/PycharmProjects/Digital_Humans_Hydra_2/DATA_ROOT/Video/cat.mp4
+test_fraction: 0.1
+unseen_strategy: random
+samples: 200000
+seed: 42
+num_workers: 5
+batch_size: 1
+pin_memory: True
+persistent_workers: True

@@ -1,0 +1,31 @@
+_target_: src.models.systems.ResFieldMLPVideoSystem
+
+validation_output_dir: ${hydra:runtime.output_dir}/output
+
+net:
+  _target_: src.models.networks.ResFieldMLP
+  in_features: 3
+  out_features: 3
+  hidden_features: 128
+  num_hidden_layers: 4
+  activation: 'relu'
+
+  resfield_layers: [ 1,2,3 ]
+  composition_rank: 40
+  mode: lookup
+  capacity: 300 # should be the number of frames of the video
+  compression: vm
+  coefficient_ratio: 1.0
+  fuse_mode: add
+
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.00005
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  _partial_: true
+  T_max: ${trainer.max_steps}
+  eta_min: ${mul:${model.optimizer.lr}, 0.1}

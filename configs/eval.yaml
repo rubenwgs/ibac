@@ -1,0 +1,18 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: video # choose datamodule with `test_dataloader()` for evaluation
+  - model: ResFieldMLP
+  - logger: tensorboard
+  - trainer: mps
+  - paths: default
+  - extras: default
+  - hydra: default
+
+task_name: "eval"
+
+tags: ["test_fraction_01"]
+
+# passing checkpoint path is necessary for evaluation
+ckpt_path: /Users/brucebalfour/PycharmProjects/Digital_Humans_Hydra_2/logs/train/runs/2024-04-04_19-10-27/checkpoints/step_100000.ckpt
