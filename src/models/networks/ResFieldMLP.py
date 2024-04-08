@@ -50,7 +50,8 @@ class ResFieldMLP(MLP):
                 fuse_mode=self.fuse_mode,
                 coeff_ratio=self.coefficient_ratio)
 
-            layer.apply(self.init_weights_normal)
+            if self.activation == 'relu':
+                layer.apply(self.init_weights_normal)
             self.net.append(layer)
         self.net = torch.nn.ModuleList(self.net)
 

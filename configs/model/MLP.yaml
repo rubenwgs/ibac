@@ -6,7 +6,7 @@ net:
   out_features: 3
   hidden_features: 128
   num_hidden_layers: 4
-  activation: 'relu'
+  activation: 'gaussian'
 
 optimizer:
   _target_: torch.optim.Adam

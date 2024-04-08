@@ -9,15 +9,15 @@ For mac you should use the following
 ```
 conda create -n Digital_Humans_MAC pytorch::pytorch torchvision torchaudio torchmetrics lightning "python>=3.12" hydra-core rich -c conda-forge -c pytorch
 conda activate Digital_Humans_MAC
-pip install hydra-optuna-sweeper hydra-colorlog
+pip install pip install scikit-image opencv-python imageio-ffmpeg tensorboard sk-video matplotlib hydra-optuna-sweeper hydra-colorlog
 ```
 
 For a pc with nvidia gpu instead use the following
 
 ```
-conda create -n Digital_Humans_GPU "python>=3.12" pytorch torchvision torchaudio pytorch-cuda=12.1 torchmetrics lightning hydra-core rich  -c conda-forge -c pytorch -c nvidia
+conda create -n Digital_Humans_GPU "python>=3.12" pytorch torchvision torchaudio cudatoolkit pytorch-cuda=12.1 torchmetrics lightning hydra-core rich  -c conda-forge -c pytorch -c nvidia
 conda activate Digital_Humans_GPU
-pip install hydra-optuna-sweeper hydra-colorlog
+pip install pip install scikit-image opencv-python imageio-ffmpeg tensorboard sk-video matplotlib hydra-optuna-sweeper hydra-colorlog
 ```
 
 ## Dataset

@@ -35,7 +35,8 @@ class MLP(nn.Module):
             layer = nn.Linear(self.dims[i], self.dims[i + 1])
 
             # apply takes as argument a function (Module)-> None
-            layer.apply(self.init_weights_normal)
+            if self.activation == 'relu':
+                layer.apply(self.init_weights_normal)
             self.net.append(layer)
 
         self.net = torch.nn.ModuleList(self.net)

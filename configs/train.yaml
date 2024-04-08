@@ -5,10 +5,10 @@
 defaults:
   - _self_
   - data: video
-  - model: ResFieldMLP
+  - model: ResFieldSirenMLP
   - callbacks: default
   - logger: tensorboard # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
-  - trainer: mps
+  - trainer: gpu
   - paths: default
   - extras: default
   - hydra: default
@@ -33,7 +33,7 @@ task_name: "train"
 # tags to help you identify your experiments
 # you can overwrite this in experiment configs
 # overwrite from command line with `python train.py tags="[first_tag, second_tag]"`
-tags: ["dev"]
+tags: ["dev, cluster"]
 
 # set False to skip model training
 train: True
