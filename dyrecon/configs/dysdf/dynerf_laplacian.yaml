@@ -1,0 +1,30 @@
+trial_name: dynerf_gaussian
+defaults:
+  - base.yaml
+
+model:
+  deform_dim: 64
+  hyper_net:
+    name: hyper_cond_network
+    d_in: ${model.deform_dim}
+    d_out: ${model.deform_dim}
+    multires_out: 0
+
+sdf_net:
+  name: laplacian_sdf_network
+  n_frames: 100
+  resfield_layers: []
+  composition_rank: 10
+  d_out: 129
+  d_in_1: 3
+  # d_in_2: 1
+  d_hidden: 128
+  n_layers: 8
+  skip_in: [4]
+  multires: 6
+  multires_topo: 0
+  bias: 0.5
+  scale: 1.0
+  geometric_init: True
+  weight_norm: False
+  inside_outside: False
