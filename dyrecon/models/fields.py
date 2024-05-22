@@ -71,7 +71,7 @@ def get_embedder(multires, input_dims=3):
 
 
 @models.register('laplacian_sdf_network')
-class SDFNetwork(BaseModel):
+class SDFLaplacianNetwork(BaseModel):
     def setup(self):
         self.n_frames = self.config.n_frames
         self.capacity = self.n_frames
@@ -202,7 +202,7 @@ class SDFNetwork(BaseModel):
             only_inputs=True)[0]
         return gradients
 @models.register('quadratic_sdf_network')
-class SDFNetwork(BaseModel):
+class SDFQuadraticNetwork(BaseModel):
     def setup(self):
         self.n_frames = self.config.n_frames
         self.capacity = self.n_frames
@@ -333,7 +333,7 @@ class SDFNetwork(BaseModel):
             only_inputs=True)[0]
         return gradients
 @models.register('gaussian_sdf_network')
-class SDFNetwork(BaseModel):
+class SDFGaussainNetwork(BaseModel):
     def setup(self):
         self.n_frames = self.config.n_frames
         self.capacity = self.n_frames
