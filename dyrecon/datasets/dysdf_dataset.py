@@ -1,3 +1,4 @@
+import gc
 import os
 
 from glob import glob
@@ -157,7 +158,6 @@ class DySDFDatasetBase():
         if self.has_depth:
             self.depths = torch.cat(_all_depths, dim=0).to(self.device)
         print('Load data: End', 'Shapes:', self.all_c2w.shape, self.all_images.shape, self.frame_ids.shape, self.directions.shape)
-
     def frame_id_to_time(self, frame_id):
         return (frame_id / self.time_max) * 2.0 - 1.0 # range of (-1, 1)
 
