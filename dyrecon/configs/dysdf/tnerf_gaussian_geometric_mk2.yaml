@@ -9,7 +9,7 @@ model:
     multires_out: 6
 
   sdf_net:
-    name: gaussian_sdf_network_geometric
+    name: gaussian_sdf_network_geometric_mk2
     n_frames: 100
     resfield_layers: []
     composition_rank: 10

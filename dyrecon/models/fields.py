@@ -466,6 +466,151 @@ class SDFGaussainNetworkGeometric(BaseModel):
             only_inputs=True)[0]
         return gradients
 
+@models.register('gaussian_sdf_network_geometric_mk2')
+class SDFGaussainNetworkGeometric(BaseModel):
+    def setup(self):
+        self.n_frames = self.config.n_frames
+        self.capacity = self.n_frames
+        self.d_out = self.config.d_out
+        self.d_in_1 = self.config.d_in_1
+        self.d_in_2 = self.config.d_in_2
+        self.d_hidden = self.config.d_hidden
+        self.n_layers = self.config.n_layers
+        self.skip_in = self.config.skip_in
+        self.multires = self.config.multires
+        self.multires_topo = self.config.multires_topo
+        self.bias = self.config.bias
+        self.scale = self.config.scale
+        self.geometric_init = self.config.geometric_init
+        self.weight_norm = self.config.weight_norm
+        self.inside_outside = self.config.inside_outside
+
+        self.resfield_layers = self.config.get('resfield_layers', [])
+        self.composition_rank = self.config.get('composition_rank', 10)
+        # create nets
+        dims = [self.d_in_1 + self.d_in_2] + [self.d_hidden for _ in range(self.n_layers)] + [self.d_out]
+
+        self.embed_fn_fine = None
+        self.embed_amb_fn = None
+
+        input_ch_1 = self.d_in_1
+        input_ch_2 = self.d_in_2
+        if self.multires > 0:
+            embed_fn, input_ch_1 = get_embedder(self.multires, input_dims=self.d_in_1)
+            self.embed_fn_fine = embed_fn
+            dims[0] += (input_ch_1 - self.d_in_1)
+        if self.multires_topo > 0:
+            embed_amb_fn, input_ch_2 = get_embedder(self.multires_topo, input_dims=self.d_in_2)
+            self.embed_amb_fn = embed_amb_fn
+            dims[0] += (input_ch_2 - self.d_in_2)
+
+        self.num_layers = len(dims)
+        self.skip_in = self.skip_in
+        self.scale = self.scale
+        for l in range(0, self.num_layers - 1):
+            if l + 1 in self.skip_in:
+                out_dim = dims[l + 1] - dims[0]
+            else:
+                out_dim = dims[l + 1]
+
+            _rank = self.composition_rank if l in self.resfield_layers else 0
+            _capacity = self.capacity if l in self.resfield_layers else 0
+            lin = resfields.Linear(dims[l], out_dim, rank=_rank, capacity=_capacity, mode='lookup')
+
+            if self.geometric_init:
+
+                if l == self.num_layers - 2:
+                    print(l)
+                    print("if 1")
+                    if not self.inside_outside:
+                        torch.nn.init.normal_(lin.weight, mean=np.sqrt(2) / (dims[l] * (1 - np.sqrt(2))), std=0.0001)
+                        torch.nn.init.constant_(lin.bias, -self.bias - np.sqrt(2) / (1 - np.sqrt(2)))
+                    else:
+                        torch.nn.init.normal_(lin.weight, mean=-np.sqrt(2) / (dims[l] * (1 - np.sqrt(2))), std=0.0001)
+                        torch.nn.init.constant_(lin.bias, self.bias + np.sqrt(2) / (1 - np.sqrt(2)))
+                elif self.multires > 0 and l == 0:
+                    print(l)
+                    print("if 2")
+                    torch.nn.init.constant_(lin.bias, 0.0)
+                    torch.nn.init.constant_(lin.weight[:, self.d_in_1:], 0.0)
+                    torch.nn.init.normal_(lin.weight[:, :self.d_in_1], 0.0, 1)
+
+                elif l in self.skip_in:
+                    print(l)
+                    print("if 3")
+                    torch.nn.init.constant_(lin.bias, 0.0)
+                    torch.nn.init.normal_(lin.weight, 0.0, 1)
+                    if self.multires > 0:
+                        torch.nn.init.constant_(lin.weight[:, -(dims[0] - self.d_in_1):-input_ch_2], 0.0)
+                    if self.multires_topo > 0:
+                        torch.nn.init.constant_(lin.weight[:, -(input_ch_2 - self.d_in_2):], 0.0)
+                elif l in [2, 3, 6, 7]:
+                    torch.nn.init.constant_(lin.bias, 0.0)
+                    torch.nn.init.normal_(lin.weight, 0.0, 0.0001)
+                else:
+                    print(l)
+                    print("if 4")
+                    torch.nn.init.constant_(lin.bias, 0.0)
+                    torch.nn.init.normal_(lin.weight, 0.0, 1)
+
+            if self.weight_norm:
+                lin = nn.utils.weight_norm(lin)
+
+            setattr(self, "lin" + str(l), lin)
+        self.activation = GaussianActivation()
+
+    def forward(self, input_pts, topo_coord=None, alpha_ratio=1.0, input_time=None, frame_id=None):
+        """
+            Args:
+                input_pts: Tensor of shape (n_rays, n_samples, d_in_1)
+                topo_coord: Optional tensor of shape (n_rays, n_samples, d_in_2)
+                alpha_ratio (float): decay ratio of positional encoding
+                input_time: Optional tensor of shape (n_rays, n_rays)
+                # frame_id: Optional tensor of shape (n_rays)
+        """
+        # TIME = topo_coord
+        inputs = input_pts * self.scale
+        if self.embed_fn_fine is not None:
+            inputs = self.embed_fn_fine(inputs, alpha_ratio)
+        if self.embed_amb_fn is not None:
+            topo_coord = self.embed_amb_fn(topo_coord, alpha_ratio)
+        if topo_coord is not None:
+            inputs = torch.cat([inputs, topo_coord], dim=-1)
+        x = inputs
+        for l in range(0, self.num_layers - 1):
+            if l in self.skip_in:
+                x = torch.cat([x, inputs], -1) / np.sqrt(2)
+
+            lin = getattr(self, "lin" + str(l))
+            x = lin(x, input_time=input_time, frame_id=frame_id)
+
+            if l < self.num_layers - 2:
+                x = self.activation(x)
+        sdf = (x[..., :1] / self.scale)
+        out = torch.cat([sdf, x[..., 1:]], dim=-1)
+        return out
+
+
+    # Anneal
+    def sdf(self, x, topo_coord, alpha_ratio, **kwargs):
+        return self.forward(x, topo_coord, alpha_ratio, **kwargs)[..., :1]
+
+    def sdf_hidden_appearance(self, x, topo_coord, alpha_ratio, **kwargs):
+        return self.forward(x, topo_coord, alpha_ratio, **kwargs)
+
+    def gradient(self, x, topo_coord, alpha_ratio, **kwargs):
+        x.requires_grad_(True)
+        y = self.sdf(x, topo_coord, alpha_ratio, **kwargs)
+        d_output = torch.ones_like(y, requires_grad=False, device=y.device)
+        gradients = torch.autograd.grad(
+            outputs=y,
+            inputs=x,
+            grad_outputs=d_output,
+            create_graph=True,
+            retain_graph=True,
+            only_inputs=True)[0]
+        return gradients
+
 @models.register('gaussian_sdf_network')
 class GaussianSDFNetwork(BaseModel):
     def setup(self):
