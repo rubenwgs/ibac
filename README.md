@@ -35,7 +35,7 @@ Below we have the cat video with diffent activations using resflied layers
 3. Laplacian
 4. Siren
 
-![Description of GIF](images/cat_resized.gif)
+![Description of GIF](./images/cat_resized.gif)
 Upon closer observation we notice that the first 3 activations give a more visually appealing output compared to the siren. 
 
 **NOTE** The cat gif above was compressed so that it could be uploaded to github. It was compressed using 
