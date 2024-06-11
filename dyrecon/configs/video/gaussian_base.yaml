@@ -2,7 +2,7 @@ trial_name: base
 tag: 'gaussian'
 
 defaults:
-  - base
+  - base.yaml
 
 model:
   name: gaussian_mlp
