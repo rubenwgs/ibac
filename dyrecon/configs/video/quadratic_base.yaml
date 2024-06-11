@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'quadratic'
+
+defaults:
+  - base.yaml
+
+model:
+  name: quadratic_mlp

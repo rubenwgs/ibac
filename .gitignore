@@ -1,10 +1,9 @@
 # Some other stuff
 cat.mp4
 build
+exp/*
 exp_owlii_benchmark/*
 exp_video/*
-exp/*
-
 *.o
 */.idea
 */.vscode

@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'relu'
+
+defaults:
+  - base.yaml
+
+model:
+  name: relu_mlp

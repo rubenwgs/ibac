@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'siren'
+
+defaults:
+  - base.yaml
+
+model:
+  name: siren_mlp
