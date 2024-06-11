@@ -35,7 +35,8 @@ Below we have the cat video with diffent activations using resflied layers
 3. Laplacian
 4. Siren
 
-![Description of GIF](./images/cat_resized.gif)
+![Cat](./images/cat_resized.gif)
+
 Upon closer observation we notice that the first 3 activations give a more visually appealing output compared to the siren. 
 
 **NOTE** The cat gif above was compressed so that it could be uploaded to github. It was compressed using 
@@ -45,13 +46,16 @@ ffmpeg -i cat_resized.gif -vf "scale=-1:320" cat_resized.gif
 ```
 ### Dynamic NeRF (tNerf) + Geometric initialization
 
-In order for the model to give any meaningful outputs it's weights must be initialized geometrically. That is, we initialize the weights such that the output of the initialized network is a sphere. Below we illustarte the loss metric as a function of time:
-
-![Description of GIF](images/cat_resized.gif)
-
+In order for the model to give any meaningful outputs it's weights must be initialized geometrically. That is, we initialize the weights such that the output of the initialized network is a sphere. 
 Since the gaussian function isn't as "nice" as the ReLU function some additional steps are taken such that the network actually outputs a sphere. 
 
-![Description of GIF](images/cat_resized.gif)
+![Sphere](images/sphere.png)
+
+Above we see the output of the model at 5000 interations. The sdf_network only has 4 layers (instead of 8) and a skip connection a layer 2.
+We experienced trouble with initializing larger networks. As a solution we initialize the weights of the extra layers to 0 such that the network theoretically still outputs the sdf function of a sphere
+Below we see the results of this adaptation after just 2500 iterations.
+
+![Sphere](images/larger_network.png)
 
 We then trained the model for 400k iterations on different datasets to get the following results
 
