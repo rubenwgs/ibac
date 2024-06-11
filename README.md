@@ -57,7 +57,7 @@ Below we see the results of this adaptation after just 2500 iterations.
 
 ![Sphere](images/larger_network.png)
 
-We then trained the model for 400k iterations on different datasets to get the following results
+We then trained the model for 400k iterations to get the following results
 
 
 ![Description of GIF](images/cat_resized.gif)
