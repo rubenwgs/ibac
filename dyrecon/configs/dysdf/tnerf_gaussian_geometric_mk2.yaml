@@ -28,7 +28,7 @@ model:
     inside_outside: False
 
 trainer:
-  max_steps: 100000
+  max_steps: 400000
   log_every_n_steps: 100
   num_sanity_val_steps: 0
   val_check_interval: 2500 #10000
