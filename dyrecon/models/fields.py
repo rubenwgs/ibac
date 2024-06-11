@@ -389,8 +389,7 @@ class SDFGaussainNetworkGeometric(BaseModel):
             if self.geometric_init:
 
                 if l == self.num_layers - 2:
-                    print(l)
-                    print(0)
+
                     if not self.inside_outside:
                         torch.nn.init.normal_(lin.weight, mean=np.sqrt(2) / (dims[l] * (1 - np.sqrt(2))), std=0.0001)
                         torch.nn.init.constant_(lin.bias, -self.bias - np.sqrt(2) / (1 - np.sqrt(2)))
@@ -398,15 +397,13 @@ class SDFGaussainNetworkGeometric(BaseModel):
                         torch.nn.init.normal_(lin.weight, mean=-np.sqrt(2) / (dims[l] * (1 - np.sqrt(2))), std=0.0001)
                         torch.nn.init.constant_(lin.bias, self.bias + np.sqrt(2) / (1 - np.sqrt(2)))
                 elif self.multires > 0 and l == 0:
-                    print(l)
-                    print(1)
+
                     torch.nn.init.constant_(lin.bias, 0.0)
                     torch.nn.init.constant_(lin.weight[:, self.d_in_1:], 0.0)
                     torch.nn.init.normal_(lin.weight[:, :self.d_in_1], 0.0, 1)
 
                 elif l in self.skip_in:
-                    print(l)
-                    print(2)
+
                     torch.nn.init.constant_(lin.bias, 0.0)
                     torch.nn.init.normal_(lin.weight, 0.0, 1)
                     if self.multires > 0:
@@ -414,18 +411,16 @@ class SDFGaussainNetworkGeometric(BaseModel):
                     if self.multires_topo > 0:
                         torch.nn.init.constant_(lin.weight[:, -(input_ch_2 - self.d_in_2):], 0.0)
                 elif (self.num_layers >= 4 and l == 1) or l - 1 in self.skip_in:
-                    print(l)
-                    print(3)
+
                     torch.nn.init.constant_(lin.bias, 0.0)
                     torch.nn.init.normal_(lin.weight, 0.0, 1)
 
                 else:
-                    print(l)
-                    print(4)
+
                     torch.nn.init.constant_(lin.bias, 0.0)
                     torch.nn.init.normal_(lin.weight, 0.0, 0.0001)
 
-            print("asdfasdf")
+
 
 
             if self.weight_norm:
