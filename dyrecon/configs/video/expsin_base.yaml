@@ -1,0 +1,11 @@
+trial_name: base
+tag: 'exp_sin'
+
+defaults:
+  - base
+
+model:
+  name: expsin_mlp
+
+
+

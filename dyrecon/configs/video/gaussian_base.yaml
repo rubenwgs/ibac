@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'gaussian'
+
+defaults:
+  - base
+
+model:
+  name: gaussian_mlp

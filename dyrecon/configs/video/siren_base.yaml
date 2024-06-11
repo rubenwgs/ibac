@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'siren'
+
+defaults:
+  - base
+
+model:
+  name: siren_mlp

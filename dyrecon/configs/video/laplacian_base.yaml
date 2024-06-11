@@ -1,0 +1,8 @@
+trial_name: base
+tag: 'laplacian'
+
+defaults:
+  - base
+
+model:
+  name: laplacian_mlp
