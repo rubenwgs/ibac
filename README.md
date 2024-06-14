@@ -59,8 +59,7 @@ Below we see the results of this adaptation after just 2500 iterations.
 
 We then trained the model for 400k iterations to get the following results
 
-
-![Description of GIF](images/cat_resized.gif)
+![Description of GIF](images/input.gif)
 
 ## References
 - [ResFields, ICLR24](https://markomih.github.io/ResFields)
